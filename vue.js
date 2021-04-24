@@ -73,15 +73,14 @@ new Vue({
             this.settings.status = !this.settings.status;
         },
         SaveWorkLength() {
-            alert('need localStorage');
-            // localStorage.WorkLength = this.settings.flow.work.length;
+            // alert('need localStorage');
+            localStorage.WorkLength = this.settings.flow.work.length;
         }
     },
 
 
     computed: {
         settingsTopButtonTitle() {
-            // return 'Top Button';
             return this.settings.status ? this.settings.title.hideIt : this.settings.title.showIt;
         }
     },
