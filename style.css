@@ -1,0 +1,19 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 3vh;
+}
+
+#app {
+    width: 40vw;
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 5px;
+    text-align: center;
+    background: burlywood;
+}
