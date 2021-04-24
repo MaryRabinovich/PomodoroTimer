@@ -81,8 +81,8 @@ new Vue({
 
     computed: {
         settingsTopButtonTitle() {
-            return 'Top Button';
-            // return this.settings.status ? this.settings.title.hideIt : this.settings.title.showIt;
+            // return 'Top Button';
+            return this.settings.status ? this.settings.title.hideIt : this.settings.title.showIt;
         }
     },
     
