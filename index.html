@@ -11,9 +11,61 @@
     <div id="app">
         <h1>Pomodoro Timer</h1>
             
-        
+        <!-- https://melodiimp3.ru/besplatnye_melodii -->
 
+        <section class="controls">
+            <button @click="startWork">
+                Start Work
+            </button>
+            <button @click="startBreak">
+                Start Break
+            </button>
+        </section>
+            
+        <section class="results">
+            <p>{{results.whatIDoNow}}</p>
+            <p>the {{results.sessionsToday}}'th today's round</p>
+        </section>
 
+        <section class="controls">
+            <button @click="stopItAll">
+                Stop It All
+            </button>
+        </section>
+
+        <section class="settings">
+            <button @click="changeSettingsStatus">
+                {{settingsTopButtonTitle}}
+            </button>
+            <div v-if="settings.status">
+                <div>
+                    <p>Work: </p>
+                    <select @change="SaveWorkLength" v-model:value="settings.flow.work.length">
+                        <option value="1000">1 second</option>
+                        <option value="5000">5 seconds</option>
+                        <option value="10000">10 seconds</option>
+                        <option value="20000">20 seconds</option>
+                        <option value="900000">15 minutes</option>
+                        <option value="1200000">20 minutes</option>
+                        <option value="1500000">25 minutes</option>
+                        <option value="1800000">30 minutes</option>
+                        <option value="2700000">45 minutes</option>
+                    </select>
+                </div>
+                <div>
+                    <p>Break:</p>
+                    <select name="" id=""></select>
+                </div>
+                <div>
+                    <p>Rounds Per Session:</p>
+                    <select name="" id=""></select>
+                </div>
+                <div>
+                    <p>Max Rounds Number Per Day:</p>
+                    <select name="" id=""></select>
+                </div>
+            </div>
+        </section>
 
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>

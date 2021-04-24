@@ -1,33 +1,93 @@
 new Vue({
     el: '#app',
     data: {
-        // stopSound: new Audio("mp3/Schtrauss_Bat.mp3"),
-        stopSound: new Audio("mp3/cats/Flёur - Теплые коты.mp3"),
-        volume: {
-            max: 0.5,
-            min: 0.01,
-            step: 0.005
+        sound: {
+            break: new Audio("mp3/manager.mp3"),
+            work: new Audio("mp3/Despacito.mp3"),
+        },
+        results: {
+            whatIDoNow: '---',
+            sessionsToday: 0,
+        },
+        settings: {
+            title: {
+                showIt: 'Show Settings',
+                hideIt: 'Hide Settings'
+            },
+
+            // status: false,
+            status: true, // отладочное для настроек
+            
+            flow: {
+                work: {
+                    length: 1000*1,
+                },
+                break: {
+                    length: 1000*1,
+                },
+                session: {
+                    numRounds: 2,
+                }
+            },
+        },
+    },
+
+    methods: {
+        /**
+         * PLAY AND STOP
+         */
+        startWork() {
+            this.results.whatIDoNow = 'work';
+            this.pauseAllSounds();
+            setTimeout(this.startWorkTimeout, this.settings.flow.work.length);
+        },
+        startWorkTimeout() {
+            this.sound.break.play();
+            this.results.whatIDoNow = 'trying to stop working'
+        },
+        startBreak() {
+            this.results.whatIDoNow = 'break';
+            this.pauseAllSounds();
+
+            setTimeout(this.startBreakTimeout, this.settings.flow.break.length);
+        },
+        startBreakTimeout() {
+            this.results.whatIDoNow = 'start working'
+            this.sound.work.play();
+        },
+        stopItAll() {
+            this.results.whatIDoNow = '---';
+            this.pauseAllSounds();
+        },
+        pauseAllSounds() {
+            this.sound.break.pause();
+            this.sound.break.currentTime = 0;
+            this.sound.work.pause();
+            this.sound.work.currentTime = 0;
+        },
+
+        /**
+         * SETTINGS
+         */
+        changeSettingsStatus() {
+            this.settings.status = !this.settings.status;
+        },
+        SaveWorkLength() {
+            localStorage.WorkLength = this.settings.flow.work.length;
         }
     },
-    methods: {
-        stopMe()  { this.stopSound.play(); },
-        okStoppingMe() { this.stopSound.pause(); },
-        
-        maximizeStopSound() {
-            // this.stopSound.volume *= 2;
-        },
-        minimizeStopSound() {
-            if (this.stopSound.volume > this.volume.min) {
-                this.stopSound.volume -= this.volume.step;
-                setTimeout(this.minimizeStopSound, 100);
-            } else this.okStoppingMe();
-        }
 
+
+    computed: {
+        settingsTopButtonTitle() {
+            return this.settings.status ? this.settings.title.hideIt : this.settings.title.showIt;
+        }
     },
     
+    
     mounted: function() {
-        this.stopSound.volume = this.volume.max;
-        this.stopMe();
-        this.minimizeStopSound();
+        // взять данные из настроек в локалСторадж
+        // предупредить о куках сначала, потом записать в локалСторадже их наличие
+        this.settings.flow.work.length = localStorage.WorkLength ?? this.settings.flow.work.length;
     }
 });

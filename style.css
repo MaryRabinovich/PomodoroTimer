@@ -3,17 +3,58 @@
     padding: 0;
     box-sizing: border-box;
 }
-
 html {
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-size: 3vh;
 }
-
 #app {
-    width: 40vw;
+    /* width: 50vw; */
+    max-width: 30rem;
     margin: 1rem;
     padding: 1rem;
     border-radius: 5px;
     text-align: center;
     background: burlywood;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-around;
+    margin: 1rem;
+}
+.controls button {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    background: yellowgreen;
+    transition: 0.2s;
+}
+.controls button:hover {
+    background: yellow;
+}
+
+.results p {
+    margin: 0.5rem;
+    border: 1px solid green;
+}
+
+.settings {
+    background: purple;
+    margin-top: 2rem;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+}
+.settings button {
+    border-radius: 5px;
+    background: burlywood;
+    padding: 0.2rem 0.5rem;
+}
+.settings div div {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.settings div div p {
+    color: white;
+    display: inline;
 }
