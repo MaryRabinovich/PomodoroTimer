@@ -73,7 +73,8 @@ new Vue({
             this.settings.status = !this.settings.status;
         },
         SaveWorkLength() {
-            localStorage.WorkLength = this.settings.flow.work.length;
+            alert('need localStorage');
+            // localStorage.WorkLength = this.settings.flow.work.length;
         }
     },
 
@@ -88,6 +89,7 @@ new Vue({
     mounted: function() {
         // взять данные из настроек в локалСторадж
         // предупредить о куках сначала, потом записать в локалСторадже их наличие
-        this.settings.flow.work.length = localStorage.WorkLength ?? this.settings.flow.work.length;
+        alert('need localStorage');
+        // this.settings.flow.work.length = localStorage.WorkLength ?? this.settings.flow.work.length;
     }
 });
