@@ -90,6 +90,6 @@ new Vue({
         // взять данные из настроек в локалСторадж
         // предупредить о куках сначала, потом записать в локалСторадже их наличие
         // alert('need localStorage');
-        // this.settings.flow.work.length = localStorage.WorkLength ?? this.settings.flow.work.length;
+        this.settings.flow.work.length = localStorage.WorkLength ?? this.settings.flow.work.length;
     }
 });
