@@ -81,7 +81,8 @@ new Vue({
 
     computed: {
         settingsTopButtonTitle() {
-            return this.settings.status ? this.settings.title.hideIt : this.settings.title.showIt;
+            return 'Top Button';
+            // return this.settings.status ? this.settings.title.hideIt : this.settings.title.showIt;
         }
     },
     
@@ -89,7 +90,7 @@ new Vue({
     mounted: function() {
         // взять данные из настроек в локалСторадж
         // предупредить о куках сначала, потом записать в локалСторадже их наличие
-        alert('need localStorage');
+        // alert('need localStorage');
         // this.settings.flow.work.length = localStorage.WorkLength ?? this.settings.flow.work.length;
     }
 });
