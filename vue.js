@@ -1,35 +1,35 @@
 new Vue({
     el: '#app',
     data: {
-        sound: {
+        soundtrack: {
             break: new Audio("mp3/manager.mp3"),
             work: new Audio("mp3/Despacito.mp3"),
         },
-        results: {
+        result: {
             whatIDoNow: '---',
-            sessionsToday: 0,
+            roundsToday: 0,
         },
         settings: {
-            title: {
+            // show: false,
+            show: true, // отладочное для настроек
+
+            showHideBtnTitle: {
                 showIt: 'Show Settings',
                 hideIt: 'Hide Settings'
             },
-
-            // status: false,
-            status: true, // отладочное для настроек
-            
             flow: {
-                work: {
-                    length: 1000*1,
-                },
-                break: {
-                    length: 1000*1,
+                length: {
+                    break: localStorage.lengthBreak ?? 1000*1,
+                    work:  localStorage.lengthWork ?? 1000*1,
                 },
                 session: {
                     numRounds: 2,
                 }
             },
         },
+        eventLoopLength: 0,
+
+        // test: 0,
     },
 
     methods: {
@@ -37,59 +37,66 @@ new Vue({
          * PLAY AND STOP
          */
         startWork() {
-            this.results.whatIDoNow = 'work';
-            this.pauseAllSounds();
-            setTimeout(this.startWorkTimeout, this.settings.flow.work.length);
+            this.result.whatIDoNow = 'work';
+            this.pauseAllsoundtracks();
+            setTimeout(this.stopWorkAsync, this.settings.flow.length.work);
+            this.eventLoopLength++;
         },
-        startWorkTimeout() {
-            this.sound.break.play();
-            this.results.whatIDoNow = 'trying to stop working'
+        stopWorkAsync() {
+            this.result.roundsToday++;
+            this.result.whatIDoNow = 'trying to stop working';
+            this.soundtrack.break.play();
+            this.eventLoopLength--;
         },
         startBreak() {
-            this.results.whatIDoNow = 'break';
-            this.pauseAllSounds();
-
-            setTimeout(this.startBreakTimeout, this.settings.flow.break.length);
+            this.result.whatIDoNow = 'break';
+            this.pauseAllsoundtracks();
+            setTimeout(this.stopBreakAsync, this.settings.flow.length.break);
+            this.eventLoopLength++;
         },
-        startBreakTimeout() {
-            this.results.whatIDoNow = 'start working'
-            this.sound.work.play();
+        stopBreakAsync() {
+            this.result.whatIDoNow = 'start working'
+            this.soundtrack.work.play();
+            this.eventLoopLength--;
         },
         stopItAll() {
-            this.results.whatIDoNow = '---';
-            this.pauseAllSounds();
+            this.result.whatIDoNow = '---';
+            this.pauseAllsoundtracks();
+            if (this.eventLoopLength > 0) location.reload();
         },
-        pauseAllSounds() {
-            this.sound.break.pause();
-            this.sound.break.currentTime = 0;
-            this.sound.work.pause();
-            this.sound.work.currentTime = 0;
+        pauseAllsoundtracks() {
+            this.soundtrack.break.pause();
+            this.soundtrack.work.pause();
+            this.soundtrack.break.currentTime = 0;
+            this.soundtrack.work.currentTime  = 0;
         },
 
         /**
          * SETTINGS
          */
-        changeSettingsStatus() {
-            this.settings.status = !this.settings.status;
+        showHideSettings() {
+            this.settings.show = !this.settings.show;
         },
         SaveWorkLength() {
-            // alert('need localStorage');
-            localStorage.WorkLength = this.settings.flow.work.length;
-        }
+            localStorage.lengthWork = this.settings.flow.length.work;
+        },
+        SaveBreakLength() {
+            localStorage.lengthBreak = this.settings.flow.length.break;
+        },
     },
 
 
     computed: {
         settingsTopButtonTitle() {
-            return this.settings.status ? this.settings.title.hideIt : this.settings.title.showIt;
-        }
+            return this.settings.show ? this.settings.showHideBtnTitle.hideIt : this.settings.showHideBtnTitle.showIt;
+        },
     },
     
-    
+
     mounted: function() {
-        // взять данные из настроек в локалСторадж
-        // предупредить о куках сначала, потом записать в локалСторадже их наличие
-        // alert('need localStorage');
-        this.settings.flow.work.length = localStorage.WorkLength ?? this.settings.flow.work.length;
+        if (!localStorage.cookies) {
+            alert('Cookies Ok?');
+            localStorage.cookies = 'Ok';
+        }
     }
 });

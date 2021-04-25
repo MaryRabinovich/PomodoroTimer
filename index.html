@@ -22,9 +22,9 @@
             </button>
         </section>
             
-        <section class="results">
-            <p>{{results.whatIDoNow}}</p>
-            <p>the {{results.sessionsToday}}'th today's round</p>
+        <section class="result">
+            <p>{{result.whatIDoNow}}</p>
+            <p>{{result.roundsToday}} rounds today</p>
         </section>
 
         <section class="controls">
@@ -34,13 +34,13 @@
         </section>
 
         <section class="settings">
-            <button @click="changeSettingsStatus">
+            <button @click="showHideSettings">
                 {{settingsTopButtonTitle}}
             </button>
-            <div v-if="settings.status">
+            <div v-if="settings.show">
                 <div>
                     <p>Work: </p>
-                    <select @change="SaveWorkLength" v-model:value="settings.flow.work.length">
+                    <select @change="SaveWorkLength" v-model:value="settings.flow.length.work">
                         <option value="1000">1 second</option>
                         <option value="5000">5 seconds</option>
                         <option value="10000">10 seconds</option>
@@ -54,7 +54,17 @@
                 </div>
                 <div>
                     <p>Break:</p>
-                    <select name="" id=""></select>
+                    <select @change="SaveBreakLength" v-model:value="settings.flow.length.break">
+                        <option value="1000">1 second</option>
+                        <option value="5000">5 seconds</option>
+                        <option value="10000">10 seconds</option>
+                        <option value="20000">20 seconds</option>
+                        <option value="900000">15 minutes</option>
+                        <option value="1200000">20 minutes</option>
+                        <option value="1500000">25 minutes</option>
+                        <option value="1800000">30 minutes</option>
+                        <option value="2700000">45 minutes</option>
+                    </select>
                 </div>
                 <div>
                     <p>Rounds Per Session:</p>
@@ -62,6 +72,10 @@
                 </div>
                 <div>
                     <p>Max Rounds Number Per Day:</p>
+                    <select name="" id=""></select>
+                </div>
+                <div>
+                    <p>Sound sources</p>
                     <select name="" id=""></select>
                 </div>
             </div>
