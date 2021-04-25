@@ -28,7 +28,7 @@ new Vue({
             },
         },
         eventLoopLength: 0,
-        idTimer: 0,
+        timerID: 0,
 
         // test: 0,
     },
@@ -40,7 +40,7 @@ new Vue({
         startWork() {
             this.result.whatIDoNow = 'work';
             this.clearTimer();
-            this.idTimer = setTimeout(
+            this.timerID = setTimeout(
                 this.stopWorkAsync, 
                 this.settings.flow.length.work
             );
@@ -53,7 +53,7 @@ new Vue({
         startBreak() {
             this.result.whatIDoNow = 'break';
             this.clearTimer();
-            this.idTimer = setTimeout(
+            this.timerID = setTimeout(
                 this.stopBreakAsync, 
                 this.settings.flow.length.break
             );
@@ -71,7 +71,7 @@ new Vue({
             this.soundtrack.work.pause();
             this.soundtrack.break.currentTime = 0;
             this.soundtrack.work.currentTime  = 0;
-            clearTimeout(this.idTimer);
+            clearTimeout(this.timerID);
         },
 
         /**
