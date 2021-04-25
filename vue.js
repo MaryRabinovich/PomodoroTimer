@@ -28,6 +28,7 @@ new Vue({
             },
         },
         eventLoopLength: 0,
+        idTimer: 0,
 
         // test: 0,
     },
@@ -38,37 +39,39 @@ new Vue({
          */
         startWork() {
             this.result.whatIDoNow = 'work';
-            this.pauseAllsoundtracks();
-            setTimeout(this.stopWorkAsync, this.settings.flow.length.work);
-            this.eventLoopLength++;
+            this.clearTimer();
+            this.idTimer = setTimeout(
+                this.stopWorkAsync, 
+                this.settings.flow.length.work
+            );
         },
         stopWorkAsync() {
             this.result.roundsToday++;
             this.result.whatIDoNow = 'trying to stop working';
             this.soundtrack.break.play();
-            this.eventLoopLength--;
         },
         startBreak() {
             this.result.whatIDoNow = 'break';
-            this.pauseAllsoundtracks();
-            setTimeout(this.stopBreakAsync, this.settings.flow.length.break);
-            this.eventLoopLength++;
+            this.clearTimer();
+            this.idTimer = setTimeout(
+                this.stopBreakAsync, 
+                this.settings.flow.length.break
+            );
         },
         stopBreakAsync() {
             this.result.whatIDoNow = 'start working'
             this.soundtrack.work.play();
-            this.eventLoopLength--;
         },
         stopItAll() {
             this.result.whatIDoNow = '---';
-            this.pauseAllsoundtracks();
-            if (this.eventLoopLength > 0) location.reload();
+            this.clearTimer();
         },
-        pauseAllsoundtracks() {
+        clearTimer() {
             this.soundtrack.break.pause();
             this.soundtrack.work.pause();
             this.soundtrack.break.currentTime = 0;
             this.soundtrack.work.currentTime  = 0;
+            clearTimeout(this.idTimer);
         },
 
         /**
