@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            font-size: 3vh;
+        }
+        #app {
+            max-width: 30rem;
+            margin: 1rem;
+            padding: 1rem;
+            border-radius: 5px;
+            text-align: center;
+            background: burlywood;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-around;
+            margin: 1rem;
+        }
+        .controls button {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            background: yellowgreen;
+            transition: 0.2s;
+        }
+        .controls button:hover {
+            background: yellow;
+        }
+
+        .result p {
+            margin: 0.5rem;
+            border: 1px solid green;
+        }
+
+        .settings {
+            background: purple;
+            margin-top: 2rem;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+        .settings button {
+            border-radius: 5px;
+            background: burlywood;
+            padding: 0.2rem 0.5rem;
+        }
+        .settings button:hover {
+            background: yellow;
+        }
+        .settings button:active {
+            background: burlywood;
+        }
+        .settings div div {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .settings div div p {
+            color: white;
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>Pomodoro Timer</h1>
+
+        <!-- https://melodiimp3.ru/besplatnye_melodii -->
+        <!-- https://pomofocus.io/ -->
+
+        <section class="controls">
+            <button @click="startWork">
+                Start Work
+            </button>
+            <button @click="startBreak">
+                Start Break
+            </button>
+        </section>
+            
+        <section class="result">
+            <p>{{result.whatIDoNow}}</p>
+            <p>{{result.roundsToday}} rounds today</p>
+        </section>
+
+        <section class="controls">
+            <button @click="stopItAll">
+                Stop It All
+            </button>
+        </section>
+
+        <section class="settings">
+            <button @click="showHideSettings">
+                {{settingsTopButtonTitle}}
+            </button>
+            <div v-if="settings.show">
+                <div>
+                    <p>Work: </p>
+                    <select @change="SaveWorkLength" v-model:value="settings.flow.length.work">
+                        <option value="1000">1 second</option>
+                        <option value="5000">5 seconds</option>
+                        <option value="10000">10 seconds</option>
+                        <option value="20000">20 seconds</option>
+                        <option value="900000">15 minutes</option>
+                        <option value="1200000">20 minutes</option>
+                        <option value="1500000">25 minutes</option>
+                        <option value="1800000">30 minutes</option>
+                        <option value="2700000">45 minutes</option>
+                    </select>
+                </div>
+                <div>
+                    <p>Break:</p>
+                    <select @change="SaveBreakLength" v-model:value="settings.flow.length.break">
+                        <option value="1000">1 second</option>
+                        <option value="5000">5 seconds</option>
+                        <option value="10000">10 seconds</option>
+                        <option value="20000">20 seconds</option>
+                        <option value="900000">15 minutes</option>
+                        <option value="1200000">20 minutes</option>
+                        <option value="1500000">25 minutes</option>
+                        <option value="1800000">30 minutes</option>
+                        <option value="2700000">45 minutes</option>
+                    </select>
+                </div>
+                <div>
+                    <p>Rounds Per Session:</p>
+                    <select name="" id=""></select>
+                </div>
+                <div>
+                    <p>Max Rounds Number Per Day:</p>
+                    <select name="" id=""></select>
+                </div>
+                <div>
+                    <p>Sound sources</p>
+                    <select name="" id=""></select>
+                </div>
+            </div>
+        </section>
+
+        
+        <locally-registered-component :counter="8" @too-big="alert('YEAH!!')"></locally-registered-component>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+
+    <script type="text/x-template" id="component-with-local-registration">
+        <button style="background: red;" @click="counter++">{{counter}}</button>
+    </script>
+    <script>
+        let locallyRegisteredComponent = {
+            template: '#component-with-local-registration',
+            props: {
+                counter: String,
+            },
+            watch: {
+                counter(newVal, oldVal) {
+                    if (newVal > 10) this.$emit('too-big')
+                }
+            }
+
+        }
+    </script>
+
+
+    <script type="text/x-template" id="click-counter-template">
+        <button @click="counter++">{{counter}}</button>
+    </script>
+    <script>
+        Vue.component('click-counter-template', {
+            template: '#click-counter-template',
+            data() {
+                return {
+                    counter: 0
+                };
+            },
+        });
+    </script>
+    
+
+    <script>
+        new Vue({
+            el: '#app',
+            components: {
+                'locally-registered-component': locallyRegisteredComponent,
+            },
+            data: {
+                soundtrack: {
+                    break: new Audio("mp3/manager.mp3"),
+                    work: new Audio("mp3/Despacito.mp3"),
+                },
+                result: {
+                    whatIDoNow: '---',
+                    roundsToday: 0,
+                },
+                settings: {
+                    // show: false,
+                    show: true, // отладочное для настроек
+
+                    showHideBtnTitle: {
+                        showIt: 'Show Settings',
+                        hideIt: 'Hide Settings'
+                    },
+                    flow: {
+                        length: {
+                            break: localStorage.lengthBreak ?? 1000*1,
+                            work:  localStorage.lengthWork ?? 1000*1,
+                        },
+                        session: {
+                            numRounds: 2,
+                        }
+                    },
+                },
+                eventLoopLength: 0,
+                timerID: 0,
+
+                // test: 0,
+            },
+
+            methods: {
+                /**
+                 * PLAY AND STOP
+                 */
+                startWork() {
+                    this.result.whatIDoNow = 'work';
+                    this.clearTimer();
+                    this.timerID = setTimeout(
+                        this.stopWorkAsync, 
+                        this.settings.flow.length.work
+                    );
+                },
+                stopWorkAsync() {
+                    this.result.roundsToday++;
+                    this.result.whatIDoNow = 'trying to stop working';
+                    this.soundtrack.break.play();
+                },
+                startBreak() {
+                    this.result.whatIDoNow = 'break';
+                    this.clearTimer();
+                    this.timerID = setTimeout(
+                        this.stopBreakAsync, 
+                        this.settings.flow.length.break
+                    );
+                },
+                stopBreakAsync() {
+                    this.result.whatIDoNow = 'start working'
+                    this.soundtrack.work.play();
+                },
+                stopItAll() {
+                    this.result.whatIDoNow = '---';
+                    this.clearTimer();
+                },
+                clearTimer() {
+                    this.soundtrack.break.pause();
+                    this.soundtrack.work.pause();
+                    this.soundtrack.break.currentTime = 0;
+                    this.soundtrack.work.currentTime  = 0;
+                    clearTimeout(this.timerID);
+                },
+
+                /**
+                 * SETTINGS
+                 */
+                showHideSettings() {
+                    this.settings.show = !this.settings.show;
+                },
+                SaveWorkLength() {
+                    localStorage.lengthWork = this.settings.flow.length.work;
+                },
+                SaveBreakLength() {
+                    localStorage.lengthBreak = this.settings.flow.length.break;
+                },
+            },
+
+
+            computed: {
+                settingsTopButtonTitle() {
+                    return this.settings.show ? this.settings.showHideBtnTitle.hideIt : this.settings.showHideBtnTitle.showIt;
+                },
+            },
+            
+
+            mounted: function() {
+                if (!localStorage.cookies) {
+                    alert('Cookies Ok?');
+                    localStorage.cookies = 'Ok';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -5,84 +5,185 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pomodoro Timer</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        html {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+        body {
+            background: lightgray;
+            color: purple;
+        }
+        #app {
+            max-width: 30rem;
+            text-align: center;
+            border-radius: 5px;
+            border: 1px solid purple;
+            margin: 1rem;
+            padding: 1rem;
+        }
+    </style>
 </head>
 <body>
+    <!-- https://melodiimp3.ru/besplatnye_melodii -->
+    <!-- https://pomofocus.io/ -->
     <div id="app">
         <h1>Pomodoro Timer</h1>
-            
-        <!-- https://melodiimp3.ru/besplatnye_melodii -->
 
-        <section class="controls">
-            <button @click="startWork">
-                Start Work
-            </button>
-            <button @click="startBreak">
-                Start Break
-            </button>
-        </section>
-            
-        <section class="result">
-            <p>{{result.whatIDoNow}}</p>
-            <p>{{result.roundsToday}} rounds today</p>
-        </section>
-
-        <section class="controls">
-            <button @click="stopItAll">
-                Stop It All
-            </button>
-        </section>
-
-        <section class="settings">
-            <button @click="showHideSettings">
-                {{settingsTopButtonTitle}}
-            </button>
-            <div v-if="settings.show">
-                <div>
-                    <p>Work: </p>
-                    <select @change="SaveWorkLength" v-model:value="settings.flow.length.work">
-                        <option value="1000">1 second</option>
-                        <option value="5000">5 seconds</option>
-                        <option value="10000">10 seconds</option>
-                        <option value="20000">20 seconds</option>
-                        <option value="900000">15 minutes</option>
-                        <option value="1200000">20 minutes</option>
-                        <option value="1500000">25 minutes</option>
-                        <option value="1800000">30 minutes</option>
-                        <option value="2700000">45 minutes</option>
-                    </select>
-                </div>
-                <div>
-                    <p>Break:</p>
-                    <select @change="SaveBreakLength" v-model:value="settings.flow.length.break">
-                        <option value="1000">1 second</option>
-                        <option value="5000">5 seconds</option>
-                        <option value="10000">10 seconds</option>
-                        <option value="20000">20 seconds</option>
-                        <option value="900000">15 minutes</option>
-                        <option value="1200000">20 minutes</option>
-                        <option value="1500000">25 minutes</option>
-                        <option value="1800000">30 minutes</option>
-                        <option value="2700000">45 minutes</option>
-                    </select>
-                </div>
-                <div>
-                    <p>Rounds Per Session:</p>
-                    <select name="" id=""></select>
-                </div>
-                <div>
-                    <p>Max Rounds Number Per Day:</p>
-                    <select name="" id=""></select>
-                </div>
-                <div>
-                    <p>Sound sources</p>
-                    <select name="" id=""></select>
-                </div>
-            </div>
-        </section>
+        <time-settings :settings="settings" @settings-updated="actualizeData"></time-settings>
 
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-    <script src="vue.js"></script>
+    <script> Vue.config.devtools = true </script>
+
+    <!-- TIME SETTINGS -->
+    <style>
+        .time {
+            border-radius: 5px;
+            border: 1px solid purple;
+            margin: 1rem;
+            padding: 1rem;
+        }
+        .time button {
+            border-radius: 5px;
+            border: none;
+            padding: 0.5rem 1rem;
+            background: purple;
+            color: white;
+        }
+        .time button:hover {
+            cursor: pointer;
+            background: rebeccapurple;
+        }
+        .time__line {
+            margin: 0.5rem 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .time__line select {
+            border-radius: 5px;
+        }
+    </style>
+    <script type="text/x-template" id="time">
+        <div class="time">
+            <button @click="closed = !closed">
+                {{closed ? 'Open' : 'Close'}} Time Settings
+            </button>
+            
+            <div v-if="!closed">
+
+                <div class="time__line">
+                    <p>Work:</p>
+                    <select v-model:value="work">
+                        <option v-for="minutes in 12" :value="5*minutes">{{5*minutes}} minutes</option>
+                    </select>
+                </div>
+
+                <div class="time__line">
+                    <p>Short Break:</p>
+                    <select v-model:value="shortBreak">
+                        <option v-for="minutes in 12" :value="5*minutes">{{5*minutes}} minutes</option>
+                    </select>
+                </div>
+
+                <div class="time__line">
+                    <p>Long Break:</p>
+                    <select v-model:value="longBreak">
+                        <option v-for="minutes in 12" :value="5*minutes">{{5*minutes}} minutes</option>
+                    </select>
+                </div>
+
+                <button @click="reset">Reset To Default Values</button>
+
+            </div>
+        </div>
+    </script>
+    <script>
+        const timeSettings = {
+            template: '#time',
+            props: ['settings'],
+            data() {
+                return {
+                    closed: true,
+                    // closed: false, // отладочное
+
+                    work:       this.settings.actual.work,
+                    shortBreak: this.settings.actual.shortBreak,
+                    longBreak:  this.settings.actual.longBreak,
+                }
+            },
+            watch: {
+                work(newVal) {
+                    localStorage.work = newVal 
+                    this.emit()
+                },
+                shortBreak(newVal) {
+                    localStorage.shortBreak = newVal 
+                    this.emit()
+                },
+                longBreak(newVal) {
+                    localStorage.longBreak = newVal 
+                    this.emit()
+                },
+            },
+            methods: {
+                emit() { this.$emit('settings-updated') },
+                reset() {
+                    this.work = this.settings.default.work 
+                    this.shortBreak = this.settings.default.shortBreak 
+                    this.longBreak = this.settings.default.longBreak 
+
+                    localStorage.work = this.work
+                    localStorage.shortBreak = this.shortBreak
+                    localStorage.longBreak = this.longBreak
+                    
+                    this.emit()
+                }
+            },
+        }
+    </script>
+
+    <!-- MAIN APP -->
+    <script>
+        new Vue({
+            el: '#app',
+            components: {
+                'time-settings': timeSettings,
+            },
+            data() {
+                return {
+                    settings: {
+                        default: {
+                            work:       25,
+                            shortBreak: 5,
+                            longBreak:  15
+                        },
+                        actual: {
+                            shortBreak: '',
+                            work:       '',
+                            longBreak:  ''
+                        }
+                    }
+                }
+            },
+            methods: {
+                actualizeData() {
+                    this.settings.actual.shortBreak = typeof(localStorage.shortBreak) === 'string' ? localStorage.shortBreak : this.settings.default.shortBreak
+                    this.settings.actual.work       = typeof(localStorage.work)       === 'string' ? localStorage.work       : this.settings.default.work
+                    this.settings.actual.longBreak  = typeof(localStorage.longBreak)  === 'string' ? localStorage.longBreak  : this.settings.default.longBreak
+                },
+            },
+            created() {
+                if (typeof(localStorage.cookies) === 'undefined') alert('Cookies Ok?')
+                localStorage.cookies = 1
+                this.actualizeData()
+            },
+        })
+    </script>
 </body>
 </html>
