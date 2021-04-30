@@ -41,7 +41,41 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
     <script> Vue.config.devtools = true </script>
 
-    <!-- TIME SETTINGS -->
+    <!-- TIME SETTINGS (one line + whole block)-->
+    <style>
+        .time__line {
+            margin: 0.5rem 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .time__line select {
+            border-radius: 5px;
+        }
+    </style>
+    <script type="text/x-template" id="time_line">
+        <div class="time__line">
+            <p>{{what}}:</p>
+            <select v-model:value="time">
+                <option v-for="minutes in 12" :value="minutes*5">{{minutes*5}} minutes</option>
+            </select>
+        </div>
+    </script>
+    <script>
+        const timeLine = {
+            template: '#time_line',
+            props: {
+                what: String,
+                time: Number
+            },
+            watch: {
+                time(newVal) {
+                    localStorage.setItem(this.what.toLowerCase(), this.time)
+                    this.$emit('settings-updated')
+                }
+            }
+        }
+    </script>
+
     <style>
         .time {
             border-radius: 5px;
@@ -60,14 +94,6 @@
             cursor: pointer;
             background: rebeccapurple;
         }
-        .time__line {
-            margin: 0.5rem 0;
-            display: flex;
-            justify-content: space-between;
-        }
-        .time__line select {
-            border-radius: 5px;
-        }
     </style>
     <script type="text/x-template" id="time">
         <div class="time">
@@ -76,73 +102,42 @@
             </button>
             
             <div v-if="!closed">
-
-                <div class="time__line">
-                    <p>Work:</p>
-                    <select v-model:value="work">
-                        <option v-for="minutes in 12" :value="5*minutes">{{5*minutes}} minutes</option>
-                    </select>
-                </div>
-
-                <div class="time__line">
-                    <p>Short Break:</p>
-                    <select v-model:value="shortBreak">
-                        <option v-for="minutes in 12" :value="5*minutes">{{5*minutes}} minutes</option>
-                    </select>
-                </div>
-
-                <div class="time__line">
-                    <p>Long Break:</p>
-                    <select v-model:value="longBreak">
-                        <option v-for="minutes in 12" :value="5*minutes">{{5*minutes}} minutes</option>
-                    </select>
-                </div>
+                <time-line what="Work"       :time="work"      ></time-line>
+                <time-line what="ShortBreak" :time="shortBreak"></time-line>
+                <time-line what="LongBreak"  :time="longBreak" ></time-line>
 
                 <button @click="reset">Reset To Default Values</button>
-
             </div>
         </div>
     </script>
     <script>
         const timeSettings = {
+            components: {
+                'time-line': timeLine,
+            },
             template: '#time',
             props: ['settings'],
             data() {
                 return {
-                    closed: true,
-                    // closed: false, // отладочное
+                    // closed: true,
+                    closed: false, // отладочное
 
                     work:       this.settings.actual.work,
                     shortBreak: this.settings.actual.shortBreak,
                     longBreak:  this.settings.actual.longBreak,
                 }
             },
-            watch: {
-                work(newVal) {
-                    localStorage.work = newVal 
-                    this.emit()
-                },
-                shortBreak(newVal) {
-                    localStorage.shortBreak = newVal 
-                    this.emit()
-                },
-                longBreak(newVal) {
-                    localStorage.longBreak = newVal 
-                    this.emit()
-                },
-            },
             methods: {
-                emit() { this.$emit('settings-updated') },
                 reset() {
                     this.work = this.settings.default.work 
                     this.shortBreak = this.settings.default.shortBreak 
                     this.longBreak = this.settings.default.longBreak 
 
                     localStorage.work = this.work
-                    localStorage.shortBreak = this.shortBreak
-                    localStorage.longBreak = this.longBreak
+                    localStorage.shortbreak = this.shortBreak
+                    localStorage.longbreak = this.longBreak
                     
-                    this.emit()
+                    this.$emit('settings-updated')
                 }
             },
         }
@@ -173,9 +168,9 @@
             },
             methods: {
                 actualizeData() {
-                    this.settings.actual.shortBreak = typeof(localStorage.shortBreak) === 'string' ? localStorage.shortBreak : this.settings.default.shortBreak
+                    this.settings.actual.shortBreak = typeof(localStorage.shortbreak) === 'string' ? localStorage.shortbreak : this.settings.default.shortBreak
                     this.settings.actual.work       = typeof(localStorage.work)       === 'string' ? localStorage.work       : this.settings.default.work
-                    this.settings.actual.longBreak  = typeof(localStorage.longBreak)  === 'string' ? localStorage.longBreak  : this.settings.default.longBreak
+                    this.settings.actual.longBreak  = typeof(localStorage.longbreak)  === 'string' ? localStorage.longbreak  : this.settings.default.longBreak
                 },
             },
             created() {
